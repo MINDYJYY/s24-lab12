@@ -3,6 +3,8 @@ package AndrewWebServices;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -19,7 +21,7 @@ public class AndrewWebServicesTest {
         // You need to use some mock objects here
         database = new InMemoryDatabase(); // We probably don't want to access our real database...
         recommender = mock(RecSys.class);
-        promoService = new PromoService();
+        promoService = mock(PromoService.class);
 
         andrewWebService = new AndrewWebServices(database, recommender, promoService);
     }
@@ -42,12 +44,19 @@ public class AndrewWebServicesTest {
     public void testSendEmail() {
         // How should we test sendEmail() when it doesn't have a return value?
         // Hint: is there something from Mockito that seems useful here?
+        String email = "scotty@andrew.cmu.edu";
+        andrewWebService.sendPromoEmail(email);
 
+        verify(promoService).mailTo(email);
     }
 
     @Test
     public void testNoSendEmail() {
         // How should we test that no email has been sent in certain situations (like right after logging in)?
         // Hint: is there something from Mockito that seems useful here?
+        String email = "scotty@andrew.cmu.edu";
+        andrewWebService.logIn("Scotty", 17214);
+
+        verify(promoService, times(0)).mailTo(email);
     }
 }
